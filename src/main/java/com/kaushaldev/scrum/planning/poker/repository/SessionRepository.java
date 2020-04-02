@@ -4,24 +4,22 @@ import com.kaushaldev.scrum.planning.poker.model.Session;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
 @Scope(value = "singleton")
 public class SessionRepository {
-    private Map<Integer, Session> sessions;
-    private AtomicInteger nextSessionId;
+    private Map<String, Session> sessions;
 
     public SessionRepository() {
         this.sessions = new ConcurrentHashMap<>();
-        nextSessionId = new AtomicInteger();
-        nextSessionId.set(1);
     }
 
     public Session createSession(final String user) {
-        int sessionId = nextSessionId.getAndIncrement();
+        String sessionId = UUID.randomUUID().toString();
 
         sessions.putIfAbsent(sessionId, new Session(sessionId));
         sessions.get(sessionId).addUser(user);
@@ -29,25 +27,25 @@ public class SessionRepository {
         return sessions.get(sessionId);
     }
 
-    public Session addUserInSession(final int sessionId, final String user) {
+    public Session addUserInSession(final String sessionId, final String user) {
         sessions.get(sessionId).addUser(user);
 
         return sessions.get(sessionId);
     }
 
-    public Session addVote(final int sessionId, final String user, final int vote) {
+    public Session addVote(final String sessionId, final String user, final int vote) {
         sessions.get(sessionId).addVote(user, vote);
 
         return sessions.get(sessionId);
     }
 
-    public Session resetSession(final int sessionId) {
+    public Session resetSession(final String sessionId) {
         sessions.get(sessionId).purgeUsers();
 
         return sessions.get(sessionId);
     }
 
-    public Session resetVotes(final int sessionId) {
+    public Session resetVotes(final String sessionId) {
         Set<String> users = sessions.get(sessionId)
                                     .getUserVoteMap()
                                     .keySet();

@@ -4,7 +4,6 @@ import com.kaushaldev.scrum.planning.poker.model.Session;
 import com.kaushaldev.scrum.planning.poker.model.User;
 import com.kaushaldev.scrum.planning.poker.model.UserVote;
 import com.kaushaldev.scrum.planning.poker.repository.SessionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -24,40 +23,40 @@ public class SessionWebSocketController {
     }
 
     @MessageMapping("/sessions/{sessionId}/users")
-    public void addUser(@DestinationVariable int sessionId,
+    public void addUser(@DestinationVariable String sessionId,
                         final User user) {
         final Session session = sessionRepository.addUserInSession(sessionId, user.getUsername());
 
-        sendMessageToSession(sessionId, session);
+        sendVoteSummaryMessage(sessionId, session);
     }
 
     @MessageMapping("/sessions/{sessionId}/vote")
-    public void addVote(@DestinationVariable int sessionId,
+    public void addVote(@DestinationVariable String sessionId,
                            final UserVote vote) {
         final Session session = sessionRepository.addVote(sessionId,
                 vote.getUser().getUsername(),
                 vote.getVote());
 
-        sendMessageToSession(sessionId, session);
+        sendVoteSummaryMessage(sessionId, session);
     }
 
     @MessageMapping("/sessions/{sessionId}/reset")
-    public void reset(@DestinationVariable int sessionId) {
+    public void reset(@DestinationVariable String sessionId) {
         final Session session =  sessionRepository.resetVotes(sessionId);
 
-        sendMessageToSession(sessionId, session);
+        sendVoteSummaryMessage(sessionId, session);
     }
 
     @MessageMapping("/sessions/{sessionId}/purge")
     @SendTo("/sessions/{sessionId}")
-    public void purgeUsers(@DestinationVariable int sessionId) {
+    public void purgeUsers(@DestinationVariable String sessionId) {
         final Session session =  sessionRepository.resetSession(sessionId);
 
-        sendMessageToSession(sessionId, session);
+        sendVoteSummaryMessage(sessionId, session);
     }
 
-    private void sendMessageToSession(final int sessionId,
-                                      final Session session) {
-        messagingTemplate.convertAndSend("/topic/sessions/" + sessionId, session);
+    private void sendVoteSummaryMessage(final String sessionId,
+                                        final Session session) {
+        messagingTemplate.convertAndSend("/topic/sessions/" + sessionId, session.getVotesSummary());
     }
 }

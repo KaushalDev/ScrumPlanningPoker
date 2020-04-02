@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Hello WebSocket</title>
+    <title>Planning Poker</title>
     <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="/main.css" rel="stylesheet">
     <script src="/webjars/jquery/jquery.min.js"></script>
@@ -10,54 +10,88 @@
     <script src="/app.js"></script>
 </head>
 <body>
-<noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being
-    enabled. Please enable
-    Javascript and reload this page!</h2></noscript>
-<div id="main-content" class="container">
-    <div class="row">
-        <div class="col-md-6">
-            <form class="form-inline">
-                <div class="form-group">
-                    <h4>Create Session</h4>
-                    <input type="text" id="createSessionUserName" class="form-control" placeholder="Your name here...">
-                    <button id="createSession" class="btn btn-default" type="submit">CreateSession</button>
-                    <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">Disconnect
-                    </button>
+    <noscript>
+        <h2 style="color: #ff0000">
+            Seems your browser doesn't support Javascript! Please enable Javascript and reload this page!
+        </h2>
+    </noscript>
+    <div class="page-header header text-center">
+        <h1 style="padding:auto;margin:auto;">Scrum Planning Poker</h1>
+    </div>
+    <div class="container-fluid" id="main-content">
+        <div class="row mt-2 ">
+            <div class="col-md-6">
+                <div class="card border-secondary">
+                    <h4 class="card-header">
+                        Create Session
+                    </h4>
+                    <div class="card-body">
+                        <form class="form">
+                            <div class="form-group">
+                                <input class="form-control" id="createSessionUserName" placeholder="Your name here..."
+                                       type="text">
+                                <button class="btn btn-default" id="createSession" type="submit">CreateSession</button>
+                                <button class="btn btn-default" disabled="disabled" id="disconnect" type="submit">Disconnect</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </form>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-secondary">
+                    <h4 class="card-header">
+                        Join Session
+                    </h4>
+                    <div class="card-body">
+                        <form class="form">
+                            <div class="form-group">
+                                <input class="form-control" id="joinSessionId" placeholder="Session Id" type="text">
+                                <input class="form-control" id="joinSessionUserName" placeholder="Your name." type="text">
+                                <button class="btn btn-default" id="joinSession" type="submit">Join</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-md-6">
-            <form class="form-inline">
-                <div class="form-group">
-                    <h4>Join Session</h4>
-                    <input type="text" id="joinSessionId" class="form-control" placeholder="Session Id">
-                    <input type="text" id="joinSessionUserName" class="form-control" placeholder="Your name.">
+        <div id="votesHeader" class="row mt-2">
+            <div class="col-md-12">
+                <div class="card border-secondary">
+                    <h4 class="card-header text-white bg-secondary"   id="sessionDetails">
+                        Cast Vote
+                    </h4>
+                    <div class="card-body">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <input class="form-control" id="vote" placeholder="Vote" type="text"/>
+                                <button class="btn btn-default" id="sendVote" type="submit">Send Vote</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <button id="joinSession" class="btn btn-default" type="submit">Join</button>
-            </form>
+            </div>
+        </div>
+        <div id="votesContent" class="row mt-2">
+            <div class="col-md-12">
+                <div class="card border-secondary">
+                    <h4 class="card-header text-white bg-secondary">
+                        Votes Summary
+                    </h4>
+                    <div class="card-body">
+                        <table class="table table-striped" id="votesSummary">
+                            <thead>
+                            <tr>
+                                <th class="col-md-6">User</th>
+                                <th class="col-md-6">Vote</th>
+                            </tr>
+                            </thead>
+                            <tbody id="votes">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <form class="form-inline">
-                <div class="form-group">
-                    <h4>Send vote</h4>
-                    <input type="text" id="vote" class="form-control" placeholder="Vote"/>
-                </div>
-                <button id="sendVote" class="btn btn-default" type="submit">Send Vote</button>
-            </form>
-            <table id="conversation" class="table table-striped">
-                <thead>
-                <tr>
-                    <th>User</th>
-                    <th>Vote</th>
-                </tr>
-                </thead>
-                <tbody id="votes">
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
 </body>
 </html>

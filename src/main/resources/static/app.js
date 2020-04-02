@@ -6,12 +6,18 @@ function setConnected(connected) {
     $("#createSession").prop("disabled", connected);
     $("#disconnect").prop("disabled", !connected);
     if (connected) {
-        $("#conversation").show();
+        $("#votesHeader").show();
+        $("#votesContent").show();
     }
     else {
-        $("#conversation").hide();
+        hideVoteSection();
     }
     $("#votes").html("");
+}
+
+function hideVoteSection() {
+    $("#votesHeader").hide();
+    $("#votesContent").hide();
 }
 
 function joinSession() {
@@ -29,6 +35,7 @@ function createSocket(sessionId) {
             showVotes(JSON.parse(data.body));
         });
         connectedSessionId = sessionId;
+        $("#sessionDetails").html("Cast Vote. You are in session " + connectedSessionId);
         addUser(sessionId, connectedUser);
     });
 }
@@ -68,13 +75,20 @@ function disconnect() {
     console.log("Disconnected");
 }
 
-function showVotes(session) {
-    console.log(JSON.stringify(session))
-    let votes = Object.values(session.userVoteMap);
+function showVotes(voteSummary) {
+    console.log(JSON.stringify(voteSummary))
 
     let voteHtml = "";
-    for (let uservote of votes) {
-        voteHtml += "<tr><td>" + uservote.user.username + "</td><td>" + uservote.vote + "</td></tr>"
+    for (let uservote of voteSummary) {
+        let cssClass = "voteValue";
+
+        if (uservote.voteState === 'Voted') {
+            cssClass = "voted";
+        } else if (uservote.voteState === 'Awaiting vote') {
+            cssClass = "awaiting_vote";
+        }
+
+        voteHtml += "<tr><td class='col-md-6'>" + uservote.user + "</td><td class='col-md-6 " + cssClass + "' >" + uservote.voteState + "</td></tr>"
     }
 
     $("#votes").html(voteHtml);
@@ -88,4 +102,5 @@ $(function () {
     $( "#sendVote" ).click(function() { sendVote(); });
     $( "#disconnect" ).click(function() { disconnect(); });
     $( "#joinSession" ).click(function() { joinSession(); });
+    hideVoteSection();
 });
