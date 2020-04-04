@@ -1,5 +1,8 @@
 package com.kaushaldev.scrum.planning.poker.model;
 
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -7,9 +10,12 @@ import java.util.stream.Collectors;
 
 public class Session {
     public static final int NOT_VOTED_VALUE = -1;
+
     private final Map<String, UserVote> userVoteMap = new ConcurrentHashMap<>();
 
     private final String sessionId;
+
+    private ZonedDateTime creationDate = ZonedDateTime.now();
 
     public Session(String sessionId) {
         this.sessionId = sessionId;
@@ -54,5 +60,9 @@ public class Session {
         return v.getVote() == -1
                 ? VotesResponse.WAITING_VOTE
                 : VotesResponse.VOTED;
+    }
+
+    public ZonedDateTime getCreationDate() {
+        return creationDate;
     }
 }

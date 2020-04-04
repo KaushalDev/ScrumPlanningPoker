@@ -3,11 +3,11 @@
 <head>
     <title>Planning Poker</title>
     <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/main.css" rel="stylesheet">
+    <link href="/main.css?v1" rel="stylesheet">
     <script src="/webjars/jquery/jquery.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
-    <script src="/app.js"></script>
+    <script src="/app.js?v2"></script>
 </head>
 <body>
     <noscript>
@@ -19,16 +19,16 @@
         <h1 style="padding:auto;margin:auto;">Scrum Planning Poker</h1>
     </div>
     <div class="container-fluid" id="main-content">
-        <div class="row mt-2 ">
-            <div class="col-md-6">
-                <div class="card border-secondary">
-                    <h4 class="card-header">
+        <div id="sessionRow" class="row mt-2 ">
+            <div id="createSessionCol" class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
                         Create Session
-                    </h4>
+                    </div>
                     <div class="card-body">
                         <form class="form">
                             <div class="form-group">
-                                <input class="form-control" id="createSessionUserName" placeholder="Your name here..."
+                                <input class="form-control control" id="createSessionUserName" placeholder="Your name here..."
                                        type="text">
                                 <button class="btn btn-default" id="createSession" type="submit">CreateSession</button>
                                 <button class="btn btn-default" disabled="disabled" id="disconnect" type="submit">Disconnect</button>
@@ -37,16 +37,16 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card border-secondary">
-                    <h4 class="card-header">
+            <div id="joinSessionCol" class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
                         Join Session
-                    </h4>
+                    </div>
                     <div class="card-body">
                         <form class="form">
                             <div class="form-group">
-                                <input class="form-control" id="joinSessionId" placeholder="Session Id" type="text">
-                                <input class="form-control" id="joinSessionUserName" placeholder="Your name." type="text">
+                                <input class="form-control control" id="joinSessionId" placeholder="Session Id" type="text">
+                                <input class="form-control control" id="joinSessionUserName" placeholder="Your name." type="text">
                                 <button class="btn btn-default" id="joinSession" type="submit">Join</button>
                             </div>
                         </form>
@@ -57,14 +57,15 @@
         <div id="votesHeader" class="row mt-2">
             <div class="col-md-12">
                 <div class="card border-secondary">
-                    <h4 class="card-header text-white bg-secondary"   id="sessionDetails">
+                    <div class="card-header"  id="sessionDetails">
                         Cast Vote
-                    </h4>
+                    </div>
                     <div class="card-body">
                         <form class="form-inline">
                             <div class="form-group">
                                 <input class="form-control" id="vote" placeholder="Vote" type="text"/>
                                 <button class="btn btn-default" id="sendVote" type="submit">Send Vote</button>
+                                <button class="btn btn-default" id="resetVotes" type="submit">Reset Vote</button>
                             </div>
                         </form>
                     </div>
@@ -74,9 +75,9 @@
         <div id="votesContent" class="row mt-2">
             <div class="col-md-12">
                 <div class="card border-secondary">
-                    <h4 class="card-header text-white bg-secondary">
+                    <div class="card-header">
                         Votes Summary
-                    </h4>
+                    </div>
                     <div class="card-body">
                         <table class="table table-striped" id="votesSummary">
                             <thead>

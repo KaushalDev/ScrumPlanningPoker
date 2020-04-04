@@ -8,9 +8,11 @@ function setConnected(connected) {
     if (connected) {
         $("#votesHeader").show();
         $("#votesContent").show();
+        $("#sessionRow").hide();
     }
     else {
         hideVoteSection();
+        $("#sessionRow").show();
     }
     $("#votes").html("");
 }
@@ -21,8 +23,14 @@ function hideVoteSection() {
 }
 
 function joinSession() {
-    connectedUser = $("#joinSessionUserName").val();
-    createSocket($("#joinSessionId").val())
+    if (!$("#joinSessionUserName").val().trim()) {
+        alert("Invalid user name");
+    } else if (!$("#joinSessionId").val().trim()) {
+        alert("Invalid session ID");
+    } else {
+        connectedUser = $("#joinSessionUserName").val();
+        createSocket($("#joinSessionId").val())
+    }
 }
 
 function createSocket(sessionId) {
@@ -35,7 +43,9 @@ function createSocket(sessionId) {
             showVotes(JSON.parse(data.body));
         });
         connectedSessionId = sessionId;
-        $("#sessionDetails").html("Cast Vote. You are in session " + connectedSessionId);
+        sessionIdHref = "<a target='blank' href='" + $(location).attr('href')
+         + "?sessionId=" + connectedSessionId + "'>" + connectedSessionId + "</a"
+        $("#sessionDetails").html("Cast Vote. You are in session : " + sessionIdHref);
         addUser(sessionId, connectedUser);
     });
 }
@@ -46,8 +56,12 @@ function addUser(sessionId, username) {
 }
 
 function sendVote() {
-    let url = '/app/sessions/' + connectedSessionId + '/vote';
-    stompClient.send(url, {}, JSON.stringify({'vote': parseInt($("#vote").val()), 'user' : { 'username' :  connectedUser}}));
+    if (Number.isInteger($("#vote").val()) &&  parseInt($("#vote").val()) > 0) {
+        alert("Invalid vote value");
+    } else {
+        let url = '/app/sessions/' + connectedSessionId + '/vote';
+        stompClient.send(url, {}, JSON.stringify({'vote': parseInt($("#vote").val()), 'user' : { 'username' :  connectedUser}}));
+    }
 }
 
 function purgeSession() {
@@ -55,16 +69,20 @@ function purgeSession() {
     stompClient.send(url, {}, {});
 }
 
-function resetSession() {
+function resetVotes() {
     let url = '/app/sessions/' + connectedSessionId + '/reset';
     stompClient.send(url, {}, {});
 }
 
 function createSession() {
-   $.post( "/sessions?user=" + $("#createSessionUserName").val(), function(data) {
-        connectedUser = $("#createSessionUserName").val();
-        createSocket(data.sessionId);
-   });
+    if (!$("#createSessionUserName").val().trim()) {
+        alert("Invalid user  name");
+    } else {
+        $.post( "/sessions?user=" + $("#createSessionUserName").val(), function(data) {
+            connectedUser = $("#createSessionUserName").val();
+            createSocket(data.sessionId);
+       });
+    }
 }
 
 function disconnect() {
@@ -94,6 +112,24 @@ function showVotes(voteSummary) {
     $("#votes").html(voteHtml);
 }
 
+function getSessionIdParam() {
+    return getQueryString("sessionId")
+}
+
+function getQueryString(key) {
+    key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars
+    var match = location.search.match(new RegExp("[?&]"+key+"=([^&]+)(&|$)"));
+    return match && decodeURIComponent(match[1].replace(/\+/g, " "));
+}
+
+function handleDisplaySessionIdInQueryParam() {
+    let sessionIdParam = getSessionIdParam();
+    if (!!sessionIdParam) {
+        $("#joinSessionId").val(sessionIdParam);
+        $("#createSessionCol").hide();
+    }
+}
+
 $(function () {
     $("form").on('submit', function (e) {
         e.preventDefault();
@@ -102,5 +138,7 @@ $(function () {
     $( "#sendVote" ).click(function() { sendVote(); });
     $( "#disconnect" ).click(function() { disconnect(); });
     $( "#joinSession" ).click(function() { joinSession(); });
+    $("#resetVotes").click(function() { resetVotes(); });
+    handleDisplaySessionIdInQueryParam();
     hideVoteSection();
 });

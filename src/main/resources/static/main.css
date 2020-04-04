@@ -18,3 +18,37 @@
 .voteValue {
    font-weight: bold
 }
+
+.card {
+    border: 1px solid black;
+}
+
+.card-header {
+    margin-bottom: 15px;
+    font-family: Arial,sans-serif;
+    display: block;
+    font-weight: bold;
+    font-size: 20px;
+    background: #E8E8E8;
+    padding: 10px;
+}
+
+.card-body {
+    padding: 10px;
+}
+
+.row {
+    margin-top: 5px;
+}
+
+.control {
+    margin-bottom: 5px;
+}
+
+#vote {
+    margin-right: 5px;
+}
+
+button {
+    margin-right: 5px;
+}
