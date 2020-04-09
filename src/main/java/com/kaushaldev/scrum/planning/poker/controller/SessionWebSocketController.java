@@ -6,7 +6,6 @@ import com.kaushaldev.scrum.planning.poker.model.UserVote;
 import com.kaushaldev.scrum.planning.poker.repository.SessionRepository;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
@@ -48,7 +47,6 @@ public class SessionWebSocketController {
     }
 
     @MessageMapping("/sessions/{sessionId}/purge")
-    @SendTo("/sessions/{sessionId}")
     public void purgeUsers(@DestinationVariable String sessionId) {
         final Session session =  sessionRepository.resetSession(sessionId);
 

@@ -42,8 +42,11 @@ function createSocket(sessionId) {
         stompClient.subscribe('/topic/sessions/'+ sessionId, function (data) {
             showVotes(JSON.parse(data.body));
         });
+        stompClient.subscribe('/topic/sessions/'+ sessionId + '/closed', function (data) {
+            window.location = window.location.href.split("?")[0];
+         });
         connectedSessionId = sessionId;
-        sessionIdHref = "<a target='blank' href='" + $(location).attr('href')
+        sessionIdHref = "<a target='blank' href='" + window.location.href.split("?")[0]
          + "?sessionId=" + connectedSessionId + "'>" + connectedSessionId + "</a"
         $("#sessionDetails").html("Cast Vote. You are in session : " + sessionIdHref);
         addUser(sessionId, connectedUser);
@@ -66,6 +69,11 @@ function sendVote() {
 
 function purgeSession() {
     let url = '/app/sessions/' + connectedSessionId + '/purge';
+    stompClient.send(url, {}, {});
+}
+
+function refreshSession(sessionIdParam) {
+    let url = '/app/sessions/' + sessionIdParam + '/refresh';
     stompClient.send(url, {}, {});
 }
 
@@ -97,6 +105,8 @@ function showVotes(voteSummary) {
     console.log(JSON.stringify(voteSummary))
 
     let voteHtml = "";
+    let isUserFound = false;
+
     for (let uservote of voteSummary) {
         let cssClass = "voteValue";
 
@@ -106,7 +116,15 @@ function showVotes(voteSummary) {
             cssClass = "awaiting_vote";
         }
 
+        if (uservote.user == connectedUser) {
+            isUserFound = true;
+        }
+
         voteHtml += "<tr><td class='col-md-6'>" + uservote.user + "</td><td class='col-md-6 " + cssClass + "' >" + uservote.voteState + "</td></tr>"
+    }
+
+    if(!isUserFound) {
+        window.location = window.location.href;
     }
 
     $("#votes").html(voteHtml);
@@ -141,4 +159,8 @@ $(function () {
     $("#resetVotes").click(function() { resetVotes(); });
     handleDisplaySessionIdInQueryParam();
     hideVoteSection();
+
+    if (!!getQueryString("isAdmin")) {
+        $("#adminSection").show();
+    }
 });

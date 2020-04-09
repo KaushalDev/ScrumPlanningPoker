@@ -7,6 +7,7 @@
     <script src="/webjars/jquery/jquery.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="/admin.js?v2"></script>
     <script src="/app.js?v2"></script>
 </head>
 <body>
@@ -87,6 +88,36 @@
                             </tr>
                             </thead>
                             <tbody id="votes">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="adminSection" class="row mt-2" style="display:none">
+            <div class="col-md-12">
+                <div class="card border-secondary">
+                    <div class="card-header">
+                        Admin
+                    </div>
+                    <div class="card-body">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <button class="btn btn-default" id="showAllSession" type="submit">Show All Sessions</button>
+                                <input class="form-control" id="sessionToDelete" placeholder="Session to delete" type="text"/>
+                                <input class="form-control" id="userToRemove" placeholder="User to delete" type="text"/>
+                                <button class="btn btn-default" id="deleteSession" type="submit">Close Session</button>
+                                <button class="btn btn-default" id="removeUser" type="submit">Remove User</button>
+                            </div>
+                        </form>
+                        <table class="table table-striped" id="adminSummary">
+                            <thead>
+                            <tr>
+                                <th class="col-md-6">Sessions</th>
+                                <th class="col-md-6">Users</th>
+                            </tr>
+                            </thead>
+                            <tbody id="adminBody">
                             </tbody>
                         </table>
                     </div>

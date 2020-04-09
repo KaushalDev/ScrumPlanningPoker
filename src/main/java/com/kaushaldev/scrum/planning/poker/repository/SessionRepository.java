@@ -6,10 +6,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Repository;
 
 import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -31,10 +28,36 @@ public class SessionRepository {
         return sessions.get(sessionId);
     }
 
+    public Collection<Session> getSessions() {
+        return this.sessions.values();
+    }
+
+    public Session getSession(final String sessionId) {
+        validateSessionId(sessionId);
+
+        return this.sessions.get(sessionId);
+    }
+
+    public void deleteSession(final String sessionId) {
+        validateSessionId(sessionId);
+
+        this.sessions.remove(sessionId);
+    }
+
+    public Session removeUser(final String sessionId, final String user) {
+        validateSessionId(sessionId);
+
+        this.sessions.get(sessionId).getUserVoteMap().remove(user);
+
+        return this.sessions.get(sessionId);
+    }
+
     public Session addUserInSession(final String sessionId, final String user) {
         validateSessionId(sessionId);
 
-        sessions.get(sessionId).addUser(user);
+        if(!sessions.get(sessionId).getUserVoteMap().containsKey(user)) {
+            sessions.get(sessionId).addUser(user);
+        }
 
         return sessions.get(sessionId);
     }
